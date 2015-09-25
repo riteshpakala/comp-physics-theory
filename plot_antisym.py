@@ -35,8 +35,8 @@ if __name__ == "__main__":
     parser.add_argument('-x1', type = float)
     parser.add_argument('-x2', type = float)
     args = parser.parse_args()
-    x1 = args.x1
-    x2 = args.x2
+    x1 = 1
+    x2 = 3
     
      
     from mpl_toolkits.mplot3d import axes3d
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     ax = fig.add_subplot(121, projection = '3d')
     x = y = np.linspace(-x1,x2,100)
     xv, yv = np.meshgrid(x,y)
-    wave_f, prob_dens = antisym(xv,yv,n1 = 1, n2 = 2, a = 1.0)#2 rows, 1 column, first of the two
+    wave_f, prob_dens = antisym(xv,yv,n1 = 1, n2 = 2, a = 1.0)
     ax.plot_surface(xv, yv, wave_f, rstride=2, cstride=2, cmap=cm.coolwarm, linewidth = .1)
     fig.subplots_adjust(top=0.85) 
     plt.title('Wave Function')
