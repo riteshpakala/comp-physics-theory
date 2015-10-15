@@ -91,7 +91,7 @@ class Dolphins:
 	def reproduce(self):
 		self.since_reproduction +=1
 	def eligibility(self, partner):
-		if (self.sex != partner.sex and self.mother != partner.name and self.father != partner.name and partner.mother != self.name and partner.father != self.name and self.age >= 8 and partner.age >=8):
+		if (self.sex != partner.sex and self.age >= 8 and partner.age >=8 and abs(self.age-partner.age) < 10 and self.since_reproduction <= 8 and partner.since_reproduction <= 8 and self.name != partner.name):
 			return True
         
 
