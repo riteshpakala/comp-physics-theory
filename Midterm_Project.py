@@ -59,21 +59,20 @@ def pair_up(self,partner):
 		partner.reproduce()
 		global breeding
 		breeding +=1
-		
 		if self.sex == 'Male':
 			temp = gender()
 			randname = random.randint(0,34)
 			if temp == 'Male':
 				living_dolphins.append(Dolphins(male_names[randname],partner.name, self.name, temp))
 			if temp == 'Female':
-				living_dolphins.append(Dolphins(male_names[randname],partner.name, self.name, temp))
+				living_dolphins.append(Dolphins(female_names[randname],partner.name, self.name, temp))
 		if self.sex == 'Female':
 			temp = gender()
 			randname = random.randint(0,34)
 			if temp == 'Male':
-				living_dolphins.append(Dolphins(female_names[randname],self.name, partner.name, temp))
+				living_dolphins.append(Dolphins(male_names[randname],self.name, partner.name, temp))
 			if temp == 'Female':
-				living_dolphins.append(Dolphins(female_names[randname],self.name, partner.name, temp))       
+				living_dolphins.append(Dolphins(female_names[randname],self.name, partner.name, temp))
 
 class Dolphins:
 	def __init__(self, name, mother, father, sex = gender()):
@@ -89,11 +88,10 @@ class Dolphins:
 
 	def aging(self):
 		self.age +=1
-		self.since_reproduction +=1
 	def reproduce(self):
-		self.since_reproduction = 0
+		self.since_reproduction +=1
 	def eligibility(self, partner):
-		if (self.sex != partner.sex and self.mother != partner.name and self.father != partner.name and partner.mother != self.name and partner.father != self.name and self.age >= 8 and self.since_laid >= 15 and partner.age >=8 and partner.since_laid >= 15 and abs(self.age-partner.age) < 10 and (self.mother != partner.mother or self.father != partner.father)):
+		if (self.sex != partner.sex and self.mother != partner.name and self.father != partner.name and partner.mother != self.name and partner.father != self.name and self.age >= 8 and partner.age >=8):
 			return True
         
 
