@@ -68,15 +68,24 @@ class Dolphins:
         	return true
 
 name()
-for i in male_names:
-    living_dolphins.append(Dolphins(i,0,0,'Male'))
-for i in female_names:
-    living_dolphins.append(Dolphins(i,0,0,'Female'))
+#initial 4 dolphins
+j = 0;
+while(j<2):
+	i = random.randint(0,4)
+	living_dolphins.append(Dolphins(male_names[i],0,0,'Male'))
+	living_dolphins.append(Dolphins(female_names[i],0,0,'Female'))
+	j+=1
+j=0;
 
-for i in range(0,12):
+for i in range(0,150):
     advance_year()
     for j in xrange(0,len(living_dolphins)):
-        if i> living_dolphins[j].death:
+        if i > living_dolphins[j].death:
             dead_dolphins.append(living_dolphins[j])
-            print living_dolphins[j].name,'has died!'
-        print living_dolphins[j].name,'is',living_dolphins[j].age,'years old'
+    if i == 100:
+    	print '##################################################'
+        print 'Entering year {:g} with {:g} dolphins, with {:g} breeding.'.format(i, len(living_dolphins), 0)
+    	print 'at year {:g}, there are {:g} living dolphins.\nthere have been {:g} births total.'.format(i, len(living_dolphins), 0)
+    if (i%25 == 0 or i == 0 or i == 149) and i != 100:
+    	print '##################################################'
+        print 'Entering year {:g} with {:g} dolphins, with {:g} breeding.'.format(i, len(living_dolphins), 0)
