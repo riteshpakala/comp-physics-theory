@@ -4,41 +4,83 @@ import numpy as np
 import pdb as p
 import urllib
 import re
+import matplotlib.pyplot as plt
+import networkx as nx
 
 male_names = []
 female_names = []
+middle_names = []
 living_dolphins = []
 dead_dolphins = []
+dolphins_dict = {}
+full_dict = {}
 breeding = 0;
+main_is_born = 0;
+
+filename = "/Users/Clarke/Desktop/male_names.txt" 
+with open(filename,"r") as f:
+	x = f.read()
+	male_name_list = eval(x)
+	random.shuffle(male_name_list)
+    
+            
+filename = "/Users/Clarke/Desktop/female_names.txt"
+with open(filename,"r") as f:
+	x = f.read()
+	female_name_list = eval(x)
+	random.shuffle(female_name_list)
+	
+filename = "/Users/Clarke/Desktop/middle_names.txt"
+with open(filename,"r") as f:
+	x = f.read()
+	middle_name_list = eval(x)
+	random.shuffle(middle_name_list)
+    
+
 def gender():
     if random.randint(0,2) == 0:
         return 'Male'
     else:
         return 'Female'
-        
+
+########################################################################################
+#only runs first time        
 def name():
-	count = 1
- 	while count < 2:
-		url1 = 'http://www.prokerala.com/kids/baby-names/boy/page-'+str(count)+'.html'
-		url2 = 'http://www.prokerala.com/kids/baby-names/girl/page-'+str(count)+'.html'
+	boy_names = ''
+	girl_names = ''
+ 	for i in range(1,226):
+		url1 = 'http://www.prokerala.com/kids/baby-names/boy/page-'+str(i)+'.html'
 		infile1 = urllib.urlopen(url1)      
 		lines1 = infile1.readlines()
 		infile1.close()
-
-		infile2 = urllib.urlopen(url2)      
-		lines2 = infile2.readlines()
-		infile2.close()
-
 		for line1 in lines1:
 			m1 = re.search("(nameDetails\">)([A-Z].*[a-z])<", line1)
 			if m1:
 				male_names.append(m1.group(2))
-
+		
+	for i in range(1,171):	
+		url2 = 'http://www.prokerala.com/kids/baby-names/girl/page-'+str(i)+'.html'
+		infile2 = urllib.urlopen(url2)
+		lines2 = infile2.readlines()
+		infile2.close()
 		for line2 in lines2:
 			m2 = re.search("(nameDetails\">)([A-Z].*[a-z])<", line2)
 			if m2:
 				female_names.append(m2.group(2))
-		count += 1
+				
+	dir_path = "/Users/Clarke/Desktop/"
+	filenm1 = dir_path + "male_names.txt"                
+	with open(filenm1,"w") as f:
+		f.write(str(male_names)) 
+	filenm2 = dir_path + "female_names.txt"                
+	with open(filenm2,"w") as f:
+		f.write(str(female_names)) 
+	filenm2 = dir_path + "middle_names.txt"                
+	with open(filenm2,"w") as f:
+		f.write(str(female_names)) 
+########################################################################################
+########################################################################################
+
 
 def advance_year():
 	for k in living_dolphins:
@@ -58,21 +100,32 @@ def pair_up(self,partner):
 		self.reproduce()
 		partner.reproduce()
 		global breeding
+		global main_is_born
+		global my_dolphin
 		breeding +=1
+		temp = gender()
+		
+		if temp == 'Male':
+			try:
+				name = male_names.next()
+			except StopIteration:
+				name = middle_names.next()
+		else:
+			try:
+				name = female_names.next()
+			except StopIteration:
+				name = middle_names.next()
+		
 		if self.sex == 'Male':
-			temp = gender()
-			randname = random.randint(0,34)
-			if temp == 'Male':
-				living_dolphins.append(Dolphins(male_names[randname],partner.name, self.name, temp))
-			if temp == 'Female':
-				living_dolphins.append(Dolphins(female_names[randname],partner.name, self.name, temp))
-		if self.sex == 'Female':
-			temp = gender()
-			randname = random.randint(0,34)
-			if temp == 'Male':
-				living_dolphins.append(Dolphins(male_names[randname],self.name, partner.name, temp))
-			if temp == 'Female':
-				living_dolphins.append(Dolphins(female_names[randname],self.name, partner.name, temp))
+				living_dolphins.append(Dolphins(name,partner.name, self.name, temp))
+		else:
+				living_dolphins.append(Dolphins(name,self.name, partner.name, temp))
+				
+		if main_is_born == 1:
+			
+			print 'hello world'
+			my_dolphin = living_dolphins[len(living_dolphins)-1]
+			main_is_born = 0
 
 class Dolphins:
 	def __init__(self, name, mother, father, sex = gender()):
@@ -88,35 +141,200 @@ class Dolphins:
 
 	def aging(self):
 		self.age +=1
-	def reproduce(self):
 		self.since_reproduction +=1
+	def reproduce(self):
+		self.since_reproduction = 0
 	def eligibility(self, partner):
-		if (self.sex != partner.sex and self.age >= 8 and partner.age >=8 and abs(self.age-partner.age) < 10 and self.since_reproduction <= 8 and partner.since_reproduction <= 8 and self.name != partner.name):
+		if (self.sex != partner.sex\
+		and self.mother != partner.mother\
+		and self.father != partner.father\
+		and self.age >= 8 and partner.age >=8\
+		and abs(self.age-partner.age) < 10\
+		and self.since_reproduction >= 8\
+		and partner.since_reproduction >= 8\
+		and self.name != partner.name\
+        and (self.mother != partner.mother or self.father != partner.father)):
 			return True
         
+def make_name(sex):
+	if sex == 'Male':
+		for i in range(0, len(male_name_list)):
+			yield male_name_list[i]
+			i +=1
 
-name()
-'''
-for j in xrange(0,len(living_dolphins)):
-        if i > living_dolphins[j].death:
-            dead_dolphins.append(living_dolphins[j])
-'''
-#initial 4 dolphins
-j = 0;
-while(j<2):
-	i = random.randint(0,4)
-	living_dolphins.append(Dolphins(male_names[i],0,0,'Male'))
-	living_dolphins.append(Dolphins(female_names[i],0,0,'Female'))
-	j+=1
-j=0;
+	if sex == 'Female':
+		for i in range(0, len(female_name_list)):
+			yield female_name_list[i]
+			i +=1
+	
+	if sex == 'Middle':
+		for i in range(0, len(middle_name_list)):
+			yield middle_name_list[i]
+			i +=1
 
-for i in range(0,150):
-	advance_year()
+if(male_name_list>0):
+	male_names = make_name('Male')
+	female_names = make_name('Female')
+	middle_names = make_name('Middle')
+else:
+	name()
 
-	if i == 100:
-		print '##################################################'
-		print 'Entering year {:g} with {:g} dolphins, with {:g} breeding.'.format(i, len(living_dolphins), breeding)
-		print 'at year {:g}, there are {:g} living dolphins.\nthere have been {:g} births total.'.format(i, len(living_dolphins), breeding)
-	if (i%25 == 0 or i == 0 or i == 149) and i != 100:
-		print '##################################################'
-		print 'Entering year {:g} with {:g} dolphins, with {:g} breeding.'.format(i, len(living_dolphins), breeding)
+
+init_dolphins_25 = 0
+init_dolphins_50 = 0
+init_dolphins_75 = 0
+init_dolphins_100 = 0
+init_dolphins_125 = 0
+init_dolphins_150 = 0
+last_dolphins_25 = 0
+last_dolphins_50 = 0
+last_dolphins_75 = 0
+last_dolphins_100 = 0
+last_dolphins_125 = 0
+last_dolphins_150 = 0
+total_dolphins_25 = 0
+total_dolphins_50 = 0
+total_dolphins_75 = 0
+total_dolphins_100 = 0
+total_dolphins_125 = 0
+total_dolphins_150 = 0
+my_dolphin = Dolphins('Ritesh','god', 'god2', 'male')
+def run_all_trials(n):
+	for k in range (1,n+1):
+		global init_dolphins_25
+		global init_dolphins_50
+		global init_dolphins_75
+		global init_dolphins_100
+		global init_dolphins_125
+		global init_dolphins_150
+		global last_dolphins_25
+		global last_dolphins_50
+		global last_dolphins_75
+		global last_dolphins_100
+		global last_dolphins_125
+		global last_dolphins_150
+		global total_dolphins_25
+		global total_dolphins_50
+		global total_dolphins_75
+		global total_dolphins_100
+		global total_dolphins_125
+		global total_dolphins_150
+		
+		print 'Trial No. {:g}'.format(k)
+		full_dict[k] = dolphins_dict
+		global year
+		year = 0
+		global breeding
+		breeding = 0
+		global total_dolphins
+		global living_dolphins
+		global main_is_born
+		living_dolphins = []
+		dead_dolphins = []
+	
+		
+		for na1 in {'John', 'James'} :
+			living_dolphins.append(Dolphins(na1,'god','god2','Male'))
+		for na2 in {'Rebecca', 'Jenny'} :
+			living_dolphins.append(Dolphins(na2,'god4','god3','Female'))
+		
+		for i in range(0,150):
+			advance_year()
+			if i == 70:
+				main_is_born = 1
+			if i == 100:
+				print '##################################################'
+				print 'Entering year {:g} with {:g} dolphins, with {:g} breeding.'.format(i, len(living_dolphins), breeding)
+				print 'at year {:g}, there are {:g} living dolphins.\nthere have been {:g} births total.'.format(i, len(living_dolphins), breeding)
+				total_dolphins_100 += len(living_dolphins)
+				if(k==1):
+					init_dolphins_100 += len(living_dolphins)
+				if(k==n):
+					last_dolphins_100 += len(living_dolphins)
+			if (i%25 == 0 or i == 0 or i == 149) and i != 100:
+				print '##################################################'
+				print 'Entering year {:g} with {:g} dolphins, with {:g} breeding.'.format(i, len(living_dolphins), breeding)
+				if(i==25): 
+					total_dolphins_25 += len(living_dolphins)
+					if(k==1):
+						init_dolphins_25 += len(living_dolphins)
+					if(k==n):
+						last_dolphins_25 += len(living_dolphins)
+				if(i==50): 
+					total_dolphins_50 += len(living_dolphins)
+					if(k==1):
+						init_dolphins_50 += len(living_dolphins)
+					if(k==n):
+						last_dolphins_50 += len(living_dolphins)
+				if(i==75): 
+					total_dolphins_50 += len(living_dolphins)
+					if(k==1):
+						init_dolphins_75 += len(living_dolphins)
+					if(k==n):
+						last_dolphins_75 += len(living_dolphins)
+				if(i==125): 
+					total_dolphins_125 += len(living_dolphins)
+					if(k==1):
+						init_dolphins_125 += len(living_dolphins)
+					if(k==n):
+						last_dolphins_125 += len(living_dolphins)
+				if(i==149): 
+					total_dolphins_150 += len(living_dolphins)
+					if(k==1):
+						init_dolphins_150 += len(living_dolphins)
+					if(k==n):
+						last_dolphins_150 += len(living_dolphins)
+		print '\n'
+		
+	########################################################################################
+	#Graph
+	total_dolphins_25 /= n
+	total_dolphins_50 /= n
+	total_dolphins_75 /= n
+	total_dolphins_100 /= n
+	total_dolphins_125 /= n
+	total_dolphins_150 /= n
+	init_population = [0, init_dolphins_25, init_dolphins_50, init_dolphins_75, init_dolphins_100, init_dolphins_125, init_dolphins_150]
+	population = [0, total_dolphins_25, total_dolphins_50, total_dolphins_75, total_dolphins_100, total_dolphins_125, total_dolphins_150]
+	last_population = [0, last_dolphins_25, last_dolphins_50, last_dolphins_75, last_dolphins_100, last_dolphins_125, last_dolphins_150]
+	years = [0, 25, 50, 75, 100, 125, 150]
+	x = np.linspace(0,150,10000)
+	plt.plot(years, init_population, color='red')
+	plt.plot(years, population, color='blue')
+	plt.plot(years, last_population, color='red')
+	plt.fill_between(years, init_population, last_population, color='red')
+	########################################################################################
+	########################################################################################
+		
+		
+	########################################################################################
+	#Genealogy
+	print my_dolphin.name
+	mother = my_dolphin.mother
+	father = my_dolphin.father
+	cousins = []
+	siblings = []
+	
+	for tracker in living_dolphins:
+		if tracker.mother == my_dolphin.mother and tracker.father == my_dolphin.father:
+			siblings.append(tracker)
+		elif tracker.mother == my_dolphin.mother or tracker.father == my_dolphin.father:
+			cousins.append(tracker)
+	
+	print '--Siblings:\n'		
+	for sibling in siblings:
+		print '{:s}'.format(sibling.name)
+	print '--Cousins:\n'	
+	for cousin in cousins:
+		print '{:s}'.format(cousin.name)	
+	
+	########################################################################################
+	########################################################################################
+	
+	########################################################################################
+	#Prints Plot and Genealogy Tree after Terminal displays relative information
+	plt.show()
+	########################################################################################
+	########################################################################################
+	
+run_all_trials(10)
