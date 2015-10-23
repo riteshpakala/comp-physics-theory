@@ -16,6 +16,7 @@ dolphins_dict = {}
 full_dict = {}
 breeding = 0;
 main_is_born = 0;
+probability = 0;
 
 filename = "/Users/Clarke/Desktop/male_names.txt" 
 with open(filename,"r") as f:
@@ -38,13 +39,13 @@ with open(filename,"r") as f:
     
 
 def gender():
-    if random.randint(0,2) == 0:
+    if random.randint(0,1) == 0:
         return 'Male'
     else:
         return 'Female'
 
 ########################################################################################
-#only runs first time        
+#only runs first time#as it generates all the names#       
 def name():
 	boy_names = ''
 	girl_names = ''
@@ -104,6 +105,7 @@ def pair_up(self,partner):
 		global my_dolphin
 		breeding +=1
 		temp = gender()
+		global probability
 		
 		if temp == 'Male':
 			try:
@@ -117,13 +119,12 @@ def pair_up(self,partner):
 				name = middle_names.next()
 		
 		if self.sex == 'Male':
+				probability += 1
 				living_dolphins.append(Dolphins(name,partner.name, self.name, temp))
 		else:
 				living_dolphins.append(Dolphins(name,self.name, partner.name, temp))
 				
 		if main_is_born == 1:
-			
-			print 'hello world'
 			my_dolphin = living_dolphins[len(living_dolphins)-1]
 			main_is_born = 0
 
@@ -288,6 +289,9 @@ def run_all_trials(n):
 		
 	########################################################################################
 	#Graph
+	fig = plt.figure()
+	ax = plt.subplot(111)
+	
 	total_dolphins_25 /= n
 	total_dolphins_50 /= n
 	total_dolphins_75 /= n
@@ -303,38 +307,62 @@ def run_all_trials(n):
 	plt.plot(years, population, color='blue')
 	plt.plot(years, last_population, color='red')
 	plt.fill_between(years, init_population, last_population, color='red')
+	
+	
+	plt.savefig('population_growth.pdf')
 	########################################################################################
 	########################################################################################
 		
 		
 	########################################################################################
-	#Genealogy
-	print my_dolphin.name
-	mother = my_dolphin.mother
-	father = my_dolphin.father
-	cousins = []
-	siblings = []
+	#Genealogy graph and output
+	if(k==n):
+		print my_dolphin.name
+		mother = my_dolphin.mother
+		father = my_dolphin.father
+		cousins = []
+		siblings = []
 	
-	for tracker in living_dolphins:
-		if tracker.mother == my_dolphin.mother and tracker.father == my_dolphin.father:
-			siblings.append(tracker)
-		elif tracker.mother == my_dolphin.mother or tracker.father == my_dolphin.father:
-			cousins.append(tracker)
-	
-	print '--Siblings:\n'		
-	for sibling in siblings:
-		print '{:s}'.format(sibling.name)
-	print '--Cousins:\n'	
-	for cousin in cousins:
-		print '{:s}'.format(cousin.name)	
-	
+		for tracker in living_dolphins:
+			if tracker.mother == my_dolphin.mother and tracker.father == my_dolphin.father:
+				siblings.append(tracker)
+			elif tracker.mother == my_dolphin.mother or tracker.father == my_dolphin.father:
+				cousins.append(tracker)
+		
+		fig = plt.figure()
+		ax = plt.subplot(111)
+		
+		G = nx.Graph()
+
+		G.add_node(my_dolphin.name)#, pos=(1,1))
+		G.add_node(my_dolphin.mother)
+		G.add_node(my_dolphin.father)
+		G.add_edge(my_dolphin.name, my_dolphin.mother)
+		G.add_edge(my_dolphin.name, my_dolphin.father)
+		
+		print '--Siblings:\n'		
+		for sibling in siblings:
+			G.add_node(sibling.name)
+			G.add_edge(my_dolphin.mother, sibling.name)
+			G.add_edge(my_dolphin.father, sibling.name)
+			print '{:s}'.format(sibling.name)
+		print '--Cousins:\n'	
+		for cousin in cousins:
+			G.add_node(cousin.name)
+			if cousin.father == my_dolphin.father:
+				G.add_edge(my_dolphin.father, cousin.name)
+			else:
+				G.add_edge(my_dolphin.mother, cousin.name)
+			print '{:s}'.format(cousin.name)
+		#pos=nx.get_node_attributes(G,'pos')
+		nx.draw_networkx(G)#, pos)
+		plt.savefig('genealogy.pdf')
 	########################################################################################
-	########################################################################################
-	
+	print "\nProbability rate: {:f}%".format(((probability*1.)/total_dolphins_150)*100)
 	########################################################################################
 	#Prints Plot and Genealogy Tree after Terminal displays relative information
 	plt.show()
 	########################################################################################
 	########################################################################################
 	
-run_all_trials(10)
+run_all_trials(1)
