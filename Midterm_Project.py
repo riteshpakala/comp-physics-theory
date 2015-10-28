@@ -18,20 +18,20 @@ breeding = 0;
 main_is_born = 0;
 probability = 0;
 
-filename = "/Users/Clarke/Desktop/male_names.txt" 
+filename = "male_names.txt" 
 with open(filename,"r") as f:
 	x = f.read()
 	male_name_list = eval(x)
 	random.shuffle(male_name_list)
     
             
-filename = "/Users/Clarke/Desktop/female_names.txt"
+filename = "female_names.txt"
 with open(filename,"r") as f:
 	x = f.read()
 	female_name_list = eval(x)
 	random.shuffle(female_name_list)
 	
-filename = "/Users/Clarke/Desktop/middle_names.txt"
+filename = "middle_names.txt"
 with open(filename,"r") as f:
 	x = f.read()
 	middle_name_list = eval(x)
@@ -69,7 +69,7 @@ def name():
 			if m2:
 				female_names.append(m2.group(2))
 				
-	dir_path = "/Users/Clarke/Desktop/"
+	dir_path = "/Users/Clarke/Documents/USF/Computational\ Physics"
 	filenm1 = dir_path + "male_names.txt"                
 	with open(filenm1,"w") as f:
 		f.write(str(male_names)) 
@@ -199,7 +199,7 @@ total_dolphins_75 = 0
 total_dolphins_100 = 0
 total_dolphins_125 = 0
 total_dolphins_150 = 0
-my_dolphin = Dolphins('Ritesh','god', 'god2', 'male')
+my_dolphin = Dolphins('Ritesh','god', 'god2', 'male')#Just initializing the main dolphin
 def run_all_trials(n):
 	for k in range (1,n+1):
 		global init_dolphins_25
@@ -337,25 +337,25 @@ def run_all_trials(n):
 		G.add_node(my_dolphin.name)#, pos=(1,1))
 		G.add_node(my_dolphin.mother)
 		G.add_node(my_dolphin.father)
-		G.add_edge(my_dolphin.name, my_dolphin.mother)
-		G.add_edge(my_dolphin.name, my_dolphin.father)
+		G.add_edge(my_dolphin.name, my_dolphin.mother, weight=30)
+		G.add_edge(my_dolphin.name, my_dolphin.father, weight=30)
 		
 		print '--Siblings:\n'		
 		for sibling in siblings:
 			G.add_node(sibling.name)
-			G.add_edge(my_dolphin.mother, sibling.name)
-			G.add_edge(my_dolphin.father, sibling.name)
+			G.add_edge(my_dolphin.mother, sibling.name, weight=5)
+			G.add_edge(my_dolphin.father, sibling.name, weight=5)
 			print '{:s}'.format(sibling.name)
 		print '--Cousins:\n'	
 		for cousin in cousins:
 			G.add_node(cousin.name)
 			if cousin.father == my_dolphin.father:
-				G.add_edge(my_dolphin.father, cousin.name)
+				G.add_edge(my_dolphin.father, cousin.name, weight=1)
 			else:
-				G.add_edge(my_dolphin.mother, cousin.name)
+				G.add_edge(my_dolphin.mother, cousin.name, weight=1)
 			print '{:s}'.format(cousin.name)
-		#pos=nx.get_node_attributes(G,'pos')
-		nx.draw_networkx(G)#, pos)
+		pos=nx.spring_layout(G, scale=2)
+		nx.draw_networkx(G, pos)
 		plt.savefig('genealogy.pdf')
 	########################################################################################
 	print "\nProbability rate: {:f}%".format(((probability*1.)/total_dolphins_150)*100)
@@ -365,4 +365,4 @@ def run_all_trials(n):
 	########################################################################################
 	########################################################################################
 	
-run_all_trials(1)
+run_all_trials(10)
