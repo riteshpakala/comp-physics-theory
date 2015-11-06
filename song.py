@@ -21,7 +21,6 @@ class Tone:
         self.orig_signal = amp*np.sin(np.pi*2*self.frequency*time_pts)
         if play_sound == True:
             self.playsound(self.orig_signal)
-
         return self.orig_signal
     
     def get_overtone(self, multi, amp = 2**10, play_sound = False):
@@ -31,7 +30,6 @@ class Tone:
         overtone = amp*np.sin(np.pi*2*multi*frequency*time_pts)
         if play_sound:
             self.playsound(overtone)
-        
         self.overtones[multi] = overtone
         
         self.overtone_num += 1
@@ -42,7 +40,7 @@ class Tone:
         weights = self.overtones.copy()
         wts = 0
         for i in self.overtones:
-            wt = int(raw_input('Please enter a weight based off of base freq 440: (440x{:d}) -> '.format(i)))
+            wt = int(raw_input('Please enter a weight based off of 440 Hz: (440x{:d} -> {:d}) -> '.format(i, i*440)))
             self.overtones[i] = (self.overtones[i], wt)
         for i in self.overtones:
             wts += self.overtones[i][1]**2
@@ -87,12 +85,12 @@ class Tone:
 
         freq = np.fft.fftfreq(signal.shape[-1], d = 1./sample_rate)
         plt.figure()
-        plt.title('Real')
+        plt.title('Real Fourier')
         plt.plot(freq, ft.real, 'b-')
         plt.xlim([-freq_lim, freq_lim])
         plt.ylim([-amp_lim, amp_lim])             
         plt.figure()
-        plt.title('Imaginary')
+        plt.title('Imaginary Fourier')
         plt.plot(freq, ft.imag, 'g-')
         plt.xlim([-freq_lim, freq_lim])
         plt.ylim([-amp_lim, amp_lim])
@@ -104,22 +102,21 @@ B = tone.get_tone(493.88, 0.5)
 D = tone.get_tone(587.33, 0.5)
 G = tone.get_tone(392., 0.5)
 
-print type(A)
-melody = np.concatenate((B, A, G, A, B, B, B, B, A, A, A, A), axis=0)
+melody = np.concatenate((B, A, G, A, B, B, B, B, A, A, A, A), axis=0)#Creates the melody
 
-tone.playsound(outside_signal = melody)
+tone.playsound(outside_signal = melody)#Plays the melody
 
-f1 = Tone()
+#Sets overtones
+orig_signal = tone.get_tone(440., 0.5)
+tone.get_overtone(2)
+tone.get_overtone(3)
+tone.get_overtone(4)
+rich_tone = tone.comb_tones()#//combines the overtones
 
-orig_signal = f1.get_tone(440., 0.5)
-f1.get_overtone(2)
-f1.get_overtone(3)
-f1.get_overtone(4)
-rich_tone = f1.comb_tones()
-
-f1.playsound()
-f1.plot_sound()
-f1.plot_fourier(freq_lim = 2000.)
+#plotting
+tone.playsound()
+tone.plot_sound()
+tone.plot_fourier(freq_lim = 2000.)
 
 
     
