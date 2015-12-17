@@ -1,7 +1,7 @@
 from pattern_recog_func import *
 
 X = []
-y=[]
+y = []
 phys_dict = {0: 'Bohr', 1: 'Einstein'}
 
 #In order for .imread to read jpegs or anything other than png, pillow and python 3 is required
@@ -17,7 +17,7 @@ for i in range(11):
 
 X = np.vstack(X)
 
-checker = 0
+count = 0
 for i in range(len(y)):
     Xtrain = np.delete(X, i, axis = 0)
     ytrain = np.delete(y, i)
@@ -29,13 +29,12 @@ for i in range(len(y)):
     md_clf = svm_train(Xtrain_proj,ytrain)
     num = md_clf.predict(Xtest_proj)[0]
     
-    print(num)
     if num == y[i]:
-        checker += 1
+        count += 1
     else:
         pass
 
-print('Percentage correct: {:.2f}%, {:d}'.format(100*(float(checker)/len(X)), checker))
+print('Percentage correct: {:.2f}%, {:d}'.format(100*(float(count)/len(X)), count))
 
 alpie = pca_svm_pred('images/unseen_phys1.jpg', md_pca, md_clf)
 betbee = pca_svm_pred('images/unseen_phys2.jpg', md_pca, md_clf)
