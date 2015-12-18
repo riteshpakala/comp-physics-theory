@@ -37,6 +37,33 @@ for i in range(len(y)):
 print('Percentage correct: {:.2f}%, {:d}'.format(100*(float(count)/len(X)), count))
 
 albertbee = pca_svm_pred('images/unseen_phys1.jpg', md_pca, md_clf)
-bertbohrein = pca_svm_pred('images/unseen_phys2.jpg', md_pca, md_clf)
+bertbohrbee = pca_svm_pred('images/unseen_phys2.jpg', md_pca, md_clf)
 print('PCA+SVM prediction for physicist 1:', phys_dict[albertbee])
-print('PCA+SVM prediction for physicist 2:', phys_dict[bertbohrein])
+print('PCA+SVM prediction for physicist 2:', phys_dict[bertbohrbee])
+
+# comb_img = np.zeros(z[0].shape)
+# for i in range(len(y)):
+# 	comb_img += z[i]
+	
+# comb_img /= len(y)
+
+# im2 = mpimg.imread('images/bohr'+str(0)+'.jpeg')
+# im = im2[:,:]
+# print (im.shape)
+# x2 = np.arange(im.shape[1])
+# y2 = np.arange(im.shape[0])
+# 
+# f2d = interp2d(x2, y2, im)
+# 
+# x_new = np.linspace(0, im.shape[1], 45)
+# y_new = np.linspace(0, im.shape[0], 60)
+# 
+# im_new = f2d(x_new, y_new)
+#     
+#     
+# plt.figure()
+# plt.title('Combined')
+# plt.imshow(im_new, cmap = 'gray', interpolation = 'nearest')
+# plt.show()
+# md_pca, X_proj = pca_X(Xtrain, n_comp = 10)
+# print md_pca)
