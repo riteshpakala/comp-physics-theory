@@ -36,7 +36,7 @@ for i in range(len(y)):
 
 print('Percentage correct: {:.2f}%, {:d}'.format(100*(float(count)/len(X)), count))
 
-alpie = pca_svm_pred('images/unseen_phys1.jpg', md_pca, md_clf)
-betbee = pca_svm_pred('images/unseen_phys2.jpg', md_pca, md_clf)
-print('PCA+SVM prediction for physicist 1:', phys_dict[alpie])
-print('PCA+SVM prediction for physicist 2:', phys_dict[betbee])
+albertbee = pca_svm_pred('images/unseen_phys1.jpg', md_pca, md_clf)
+bertbohrein = pca_svm_pred('images/unseen_phys2.jpg', md_pca, md_clf)
+print('PCA+SVM prediction for physicist 1:', phys_dict[albertbee])
+print('PCA+SVM prediction for physicist 2:', phys_dict[bertbohrein])
